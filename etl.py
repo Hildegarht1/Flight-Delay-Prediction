@@ -1,13 +1,13 @@
 
 import pandas as pd
 
-def load_data(path='file:///C:/Users/User/Downloads/ny-flights.csv'):
+def load_data(path='ny-flights.csv'):
     df = pd.read_csv(path)
     return df
 
 def clean_data(df):
-    df = df.dropna(subset=['Distance', 'ScheduledTime', 'Delayed'])
-    df['Delayed'] = df['Delayed'].astype(int)
+    df = df.dropna(subset=['distance', 'sched_arr_time', 'arr_delay'])
+    df['arr_delay'] = df['arr_delay'].astype(int)
     return df
 
 if __name__ == "__main__":
