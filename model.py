@@ -22,39 +22,40 @@ df.columns = df.columns.str.strip().str.lower()
 # 2. Feature selection
 # --------------------------
 target = 'arr_delay'
-possible_features = ['distance', 'sched_arr_time', 'month', 'day', 'airline', 'flight']
 
-features = [f for f in possible_features if f in df.columns]
+# Keep only relevant features
+features = ['distance', 'sched_arr_time', 'month', 'day', 'carrier']  # drop flight numbers
+df = df[[*features, target]]
 
-if not features:
-    raise ValueError("❌ No valid feature columns found in dataset.")
+# --------------------------
+# 3. Encode categorical features
+# --------------------------
+cat_cols = df.select_dtypes(include=['object']).columns.tolist()
+if cat_cols:
+    df = pd.get_dummies(df, columns=cat_cols, drop_first=True)
+    print(f"✅ Encoded categorical columns: {cat_cols}")
 
-print(f"✅ Using features: {features}")
-print(f"🎯 Target column: {target}")
-
-# Encode categorical features if any
-df = pd.get_dummies(df, columns=[col for col in features if df[col].dtype == 'object'], drop_first=True)
-
-X = df[features]
+X = df.drop(columns=[target])
 y = df[target]
 
 # --------------------------
-# 3. Split and scale data
+# 4. Split and scale data
 # --------------------------
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
 scaler = StandardScaler()
 X_train_scaled = scaler.fit_transform(X_train)
 X_test_scaled = scaler.transform(X_test)
 
 # --------------------------
-# 4. Train logistic regression model
+# 5. Train logistic regression model
 # --------------------------
 print("🚀 Training Logistic Regression model...")
 model = LogisticRegression(max_iter=1000, random_state=42)
 model.fit(X_train_scaled, y_train)
 
 # --------------------------
-# 5. Evaluate the model
+# 6. Evaluate the model
 # --------------------------
 y_pred = model.predict(X_test_scaled)
 acc = accuracy_score(y_test, y_pred)
@@ -65,7 +66,7 @@ print("\nConfusion Matrix:\n", confusion_matrix(y_test, y_pred))
 print("\nClassification Report:\n", classification_report(y_test, y_pred))
 
 # --------------------------
-# 6. Save model and scaler
+# 7. Save model and scaler
 # --------------------------
 output_dir = "artifacts"
 os.makedirs(output_dir, exist_ok=True)
