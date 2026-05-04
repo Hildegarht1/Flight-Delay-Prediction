@@ -1,7 +1,9 @@
 import streamlit as st
+import streamlit.components.v1 as components
 import pandas as pd
 import joblib
 import matplotlib.pyplot as plt
+from pathlib import Path
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay, accuracy_score, classification_report
 
 st.set_page_config(page_title="Flight Delay Prediction", layout="wide")
@@ -28,7 +30,7 @@ carrier_choices = sorted(
 )
 
 st.sidebar.title("Navigation")
-page = st.sidebar.radio("Choose a view", ["Overview", "Predict a Flight"])
+page = st.sidebar.radio("Choose a view", ["Overview", "Predict a Flight", "Visual Dashboards"])
 
 st.info(f"Delay definition: flights with arrival delay greater than {delay_threshold} minutes are labeled delayed.")
 
@@ -83,6 +85,15 @@ def predict_delays(input_df: pd.DataFrame):
     return pd.Series(predictions, index=input_df.index), pd.Series(probabilities, index=input_df.index)
 
 
+def render_dashboard_file(title: str, file_name: str) -> None:
+    dashboard_path = Path("dashboards") / file_name
+    if dashboard_path.exists():
+        st.subheader(title)
+        components.html(dashboard_path.read_text(encoding="utf-8"), height=700, scrolling=True)
+    else:
+        st.warning(f"{file_name} not found in dashboards/")
+
+
 if page == "Overview":
     st.subheader("📊 Sample of Cleaned Data")
     st.dataframe(df.head(10))
@@ -127,7 +138,7 @@ if page == "Overview":
     total_preds = int(len(df_preds))
     st.success(f"✅ Correct Predictions: {correct_preds}/{total_preds} ({correct_preds / total_preds * 100:.2f}%)")
 
-else:
+elif page == "Predict a Flight":
     st.subheader("🔮 Predict a Single Flight")
     st.write("Enter flight details below to get a delay prediction.")
 
@@ -167,3 +178,13 @@ else:
 
         st.caption("Derived model features")
         st.dataframe(build_feature_frame(input_row))
+
+elif page == "Visual Dashboards":
+    st.subheader("📊 Exploratory Dashboards")
+    st.write("These are the saved Plotly charts generated from the EDA workflow.")
+
+    render_dashboard_file("Top 10 airline / carrier views", "distance_by_airline.html")
+    render_dashboard_file("Total distance flown by carrier", "distance_by_carrier.html")
+    render_dashboard_file("Monthly trend", "monthly_trend.html")
+    render_dashboard_file("Monthly distance trend", "monthly_distance_trend.html")
+    render_dashboard_file("Delay vs scheduled arrival time", "delay_vs_sched_time.html")
