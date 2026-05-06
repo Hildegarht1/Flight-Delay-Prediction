@@ -16,7 +16,7 @@ st.title("✈️ Flight Delay Prediction")
 df = pd.read_csv("ny-flights.csv")
 df.columns = df.columns.str.strip().str.lower()
 
-required_cols = ['arr_delay', 'distance', 'sched_arr_time', 'month', 'day', 'carrier']
+required_cols = ['arr_delay', 'dep_delay', 'distance', 'sched_arr_time', 'month', 'day', 'carrier', 'origin', 'dest']
 df = df.dropna(subset=required_cols).copy()
 
 model = joblib.load("artifacts/flight_delay_model.pkl")
@@ -28,6 +28,8 @@ model_name = joblib.load("artifacts/model_name.pkl")
 carrier_choices = sorted(
     col.replace("carrier_", "") for col in trained_columns if col.startswith("carrier_")
 )
+origin_choices = sorted(df["origin"].dropna().astype(str).unique().tolist())
+dest_choices = sorted(df["dest"].dropna().astype(str).unique().tolist())
 
 st.sidebar.title("Navigation")
 page = st.sidebar.radio("Choose a view", ["Overview", "Predict a Flight", "Visual Dashboards"])
@@ -59,8 +61,8 @@ def build_feature_frame(input_df: pd.DataFrame) -> pd.DataFrame:
     )
 
     feature_df = pd.get_dummies(
-        feature_df[['distance', 'hour', 'minute', 'month', 'day', 'is_weekend', 'carrier', 'time_of_day', 'season', 'distance_category']],
-        columns=['carrier', 'time_of_day', 'season', 'distance_category'],
+        feature_df[['distance', 'dep_delay', 'hour', 'minute', 'month', 'day', 'is_weekend', 'carrier', 'origin', 'dest', 'time_of_day', 'season', 'distance_category']],
+        columns=['carrier', 'origin', 'dest', 'time_of_day', 'season', 'distance_category'],
         drop_first=True,
     )
 
@@ -152,7 +154,15 @@ elif page == "Predict a Flight":
             day = st.selectbox("Day of month", list(range(1, 32)), index=0)
         with col3:
             carrier = st.selectbox("Carrier", carrier_choices)
-            submit = st.form_submit_button("Predict delay")
+            dep_delay = st.number_input("Departure delay (minutes)", value=0, min_value=-300, max_value=1800, step=1)
+
+        col4, col5 = st.columns(2)
+        with col4:
+            origin = st.selectbox("Origin airport", origin_choices)
+        with col5:
+            dest = st.selectbox("Destination airport", dest_choices)
+
+        submit = st.form_submit_button("Predict delay")
 
     if submit:
         input_row = pd.DataFrame([{
@@ -161,6 +171,9 @@ elif page == "Predict a Flight":
             'month': month,
             'day': day,
             'carrier': carrier,
+            'dep_delay': dep_delay,
+            'origin': origin,
+            'dest': dest,
         }])
 
         prediction, probability = predict_delays(input_row)

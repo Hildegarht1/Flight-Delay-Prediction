@@ -63,8 +63,8 @@ print(f"Delayed flights: {df['is_delayed'].sum()} ({df['is_delayed'].mean()*100:
 # --------------------------
 # Original + engineered features
 features = [
-    'distance', 'hour', 'minute', 'month', 'day',
-    'carrier', 'time_of_day', 'is_weekend', 'season', 'distance_category'
+    'distance', 'dep_delay', 'hour', 'minute', 'month', 'day',
+    'carrier', 'origin', 'dest', 'time_of_day', 'is_weekend', 'season', 'distance_category'
 ]
 
 df_model = df[features + ['is_delayed']].copy()
