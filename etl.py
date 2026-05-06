@@ -16,10 +16,10 @@ def clean_data(df):
     - Drop rows with missing crucial values
     - Ensure numeric columns are correctly typed
     """
-    df = df.dropna(subset=['arr_delay', 'dep_delay', 'distance', 'sched_arr_time', 'month', 'day', 'carrier', 'origin', 'dest'])
+    df = df.dropna(subset=['arr_delay', 'dep_delay', 'distance', 'sched_arr_time', 'month', 'day', 'carrier', 'origin', 'dest']).copy()
     # Convert numeric columns
     numeric_cols = ['arr_delay', 'dep_delay', 'distance', 'sched_arr_time', 'month', 'day']
     for col in numeric_cols:
-        df[col] = pd.to_numeric(df[col], errors='coerce')
+        df.loc[:, col] = pd.to_numeric(df[col], errors='coerce')
     df = df.dropna(subset=numeric_cols)
     return df

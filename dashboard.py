@@ -66,11 +66,7 @@ def build_feature_frame(input_df: pd.DataFrame) -> pd.DataFrame:
         drop_first=True,
     )
 
-    for col in trained_columns:
-        if col not in feature_df.columns:
-            feature_df[col] = 0
-
-    return feature_df[trained_columns]
+    return feature_df.reindex(columns=trained_columns, fill_value=0)
 
 
 def predict_delays(input_df: pd.DataFrame):
