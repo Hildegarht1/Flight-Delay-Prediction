@@ -1,6 +1,10 @@
 # ✈️ Flight Delay Prediction
 
-Machine learning model that predicts flight delays using historical data from New York airports. Achieves **59.33% accuracy** using logistic regression.
+Machine learning project that predicts flight delays using historical data from New York airports. The current model uses a random forest classifier and an interactive Streamlit dashboard.
+
+## 📘 Full Documentation
+
+For a detailed explanation of the project, design choices, KPI rationale, tech stack, and interview Q&A, see [docs/PROJECT_DOCUMENTATION.md](docs/PROJECT_DOCUMENTATION.md).
 
 ## 🚀 Quick Start
 
@@ -35,17 +39,17 @@ streamlit run dashboard.py
 ## 🎯 Features
 
 - Binary classification (delayed >15 min vs on-time)
-- Interactive Streamlit dashboard with confusion matrix
+- Interactive Streamlit dashboard with model metrics, visual dashboards, and single-flight prediction
 - Plotly visualizations for exploratory analysis
-- Logistic regression with balanced classes
+- Random forest classifier with engineered time, route, and airport features
 
 **Model Features:**
-- Distance, scheduled arrival time, month, day, carrier
+- Distance, departure delay, scheduled arrival time, month, day, carrier, origin, destination, and engineered time features
 
 ## 📊 Performance
 
-- **Accuracy**: 59.33%
-- **Model**: Logistic Regression
+- **Accuracy**: 88.8% (training evaluation)
+- **Model**: Random Forest
 - **Threshold**: 15 minutes
 
 ## 🔮 Future Improvements
@@ -54,6 +58,11 @@ streamlit run dashboard.py
 - Try Random Forest or Gradient Boosting
 - Add weather data
 - Hyperparameter tuning
+
+## 📎 Downloadable Docs
+
+- [Project documentation (Markdown)](docs/PROJECT_DOCUMENTATION.md)
+- [Project documentation (PDF)](docs/Flight_Delay_Project_Documentation.pdf)
 
 ## 👤 Author
 
