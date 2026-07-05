@@ -25,10 +25,24 @@ python model.py
 streamlit run dashboard.py
 ```
 
+### Optional PySpark Pipeline
+```bash
+# Install Spark dependency
+pip install -r requirements-pyspark.txt
+
+# Build a curated feature dataset with PySpark
+spark-submit pyspark_pipeline.py --input ny-flights.csv --output data/gold/flights_features
+```
+
+The PySpark script mirrors the pandas ETL workflow and prepares the project for
+larger-scale Spark or Databricks-style processing. See
+[docs/PYSPARK_DATABRICKS_NOTES.md](docs/PYSPARK_DATABRICKS_NOTES.md).
+
 ## 📁 Project Structure
 
 ```
 ├── etl.py              # Data loading and cleaning
+├── pyspark_pipeline.py # Spark-based feature preparation
 ├── model.py            # Model training
 ├── dashboard.py        # Streamlit dashboard
 ├── eda.py              # Data visualizations
